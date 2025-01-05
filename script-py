@@ -1,0 +1,27 @@
+from icalendar import Calendar, Event
+from datetime import datetime, timedelta
+import pandas as pd
+
+# Carregar os dados do Excel gerado
+df_treino = pd.read_excel("Plano_Treino_Maratona_2025.xlsx")
+
+# Criar um calendário
+cal = Calendar()
+
+# Adicionar eventos ao calendário
+for index, row in df_treino.iterrows():
+    event = Event()
+    # Nome do evento (treino)
+    event.add('summary', f"{row['Treino']} - {row['Descrição']}")
+    # Data do evento
+    event_date = datetime.strptime(row['Data'], "%Y-%m-%d")
+    event.add('dtstart', event_date)
+    # Data de término do evento (assume duração de 1h para cada treino)
+    event.add('dtend', event_date + timedelta(hours=1))
+    # Adicionar ao calendário
+    cal.add_component(event)
+
+# Salvar em formato .ics
+ics_file_path = "Plano_Treino_Maratona_2025.ics"
+with open(ics_file_path, 'wb') as f:
+    f.write(cal.to_ical())
